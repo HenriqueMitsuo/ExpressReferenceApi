@@ -1,29 +1,36 @@
 const express = require('express');
 const uuid = require('uuid');
 const router = express.Router();
-
+const models = require('../../models');
 const users = require('../../Users');
 
 // API USERS
 
 // GET All users
 router.get('/', (req, res) => {
-    res.json(users);
+    models.User.findAll()
+        .then((users) => {
+            res.json(users);
+        })
+        .catch((err) => {
+            res.status(400).json({ msg: `Users not found`, error: `${err}` });
+        });
 });
 
 // GET Single user
 // :id => parametro
 router.get('/:id', (req, res) => {
     // req.params.id => acessa o parametro enviado
-    // res.send(req.params.id);
     let id = parseInt(req.params.id);
-    const found = users.some(user => user.id === id)
-    if (found) {
-        res.json(users.filter(user => user.id === id));
-    }
-    else {
-        res.status(400).json({ msg: `User ${req.params.id} not found` });
-    }
+    models.User.findByPk(id)
+        .then((user) => {
+            if(user === null){
+                res.status(400).json({ msg: `User ${req.params.id} not found`, error: `${err}` });
+            }
+            else{
+                res.json(user);
+            }
+        });
 });
 
 // POST Create User
