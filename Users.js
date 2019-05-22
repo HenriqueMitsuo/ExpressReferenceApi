@@ -1,3 +1,8 @@
+/* 
+ * !IMPORTANT
+ * Mock-up user
+ *
+*/
 const users = [
     {
         "id": 1,
