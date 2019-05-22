@@ -2,6 +2,8 @@ const express = require('express');
 const path = require('path');
 const logger = require('./middleware/logger');
 
+const sequelize = require('./config/database');
+
 const app = express();
 
 // Criando Static Folder
@@ -12,6 +14,10 @@ app.use(logger);
 // Body parser
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
+
+sequelize.authenticate()
+    .then(() => console.log('Database Connected Successfully... !!!'))
+    .catch((err) => console.log('Error: ' + err));
 
 // User api route
 app.use('/api/users', require('./routes/api/users'));

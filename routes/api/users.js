@@ -2,13 +2,19 @@ const express = require('express');
 const uuid = require('uuid');
 const router = express.Router();
 
+const db = require('../../config/database');
+const User = require('../../models/User');
+
 const users = require('../../Users');
 
 // API USERS
 
 // GET All users
 router.get('/', (req, res) => {
-    res.json(users);
+    User.findAll()
+        .then(userss => {
+            res.json(userss);
+        });
 });
 
 // GET Single user
@@ -17,13 +23,16 @@ router.get('/:id', (req, res) => {
     // req.params.id => acessa o parametro enviado
     // res.send(req.params.id);
     let id = parseInt(req.params.id);
-    const found = users.some(user => user.id === id)
-    if (found) {
-        res.json(users.filter(user => user.id === id));
-    }
-    else {
-        res.status(400).json({ msg: `User ${req.params.id} not found` });
-    }
+
+    User.findByPk(id)
+        .then(user => {
+            if (user === null) {
+                res.status(400).json({ msg: `User ${req.params.id} not found` });
+            }
+            else {
+                res.json(user);
+            } 
+        });
 });
 
 // POST Create User
